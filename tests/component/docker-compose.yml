@@ -1,0 +1,50 @@
+services:
+  abs:
+    container_name: abs
+    image: mcr.microsoft.com/azure-storage/azurite
+    restart: always
+    ports:
+      - "10000:10000"
+    command: azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+
+  db:
+    container_name: db
+    image: postgres:13.3-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=berlin
+      - POSTGRES_USER=root
+    ports:
+      - "5432:5432"
+    volumes:
+      - './init_db.sql:/docker-entrypoint-initdb.d/init_db.sql'
+    healthcheck:
+      test: pg_isready -U postgres
+
+  mock-service:
+    build:
+      context: ../
+      dockerfile: ./component/mock_container/Dockerfile
+    container_name: mock-service
+    ports:
+      - "8086:8086"
+
+  extraction-service:
+      build:
+        context: ../../
+        dockerfile: ./Dockerfile
+      container_name: extraction-service
+      ports:
+        - "8085:8085"
+
+  component-test-service:
+      build:
+        context: ../
+        dockerfile: ./component/bdd_container/Dockerfile
+      container_name: component-test-service
+      depends_on:
+        db:
+          condition: service_healthy
+        abs:
+          condition: service_started
