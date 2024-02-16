@@ -8,7 +8,7 @@ Scenario: service health
 Scenario: extraction
   When user starts extraction process for the date 2021-01-01
   Then the request should be completed with status code 200
-  And the response should have properties like: extract_date,total_records,status
+  And the response should have following properties: extract_date,total_records,status
   And in the response, extract_date should be 2021-01-01
   And in the response, total_records should be 1000
   And in the response, status should be successful

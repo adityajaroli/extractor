@@ -25,7 +25,7 @@ def check_status_code(context, response_code):
     assert context['response'].status_code == response_code
 
 
-@then(parsers.parse("the response should have properties like: {properties}"))
+@then(parsers.parse("the response should have following properties: {properties}"))
 def verify_properties_in_res(context, properties):
     res = context['response'].json()
     for _p in properties.split(","):
