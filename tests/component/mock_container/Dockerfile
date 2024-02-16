@@ -1,11 +1,4 @@
-# Base image
 FROM python:3.10-slim-buster
-RUN apt-get update && apt-get install -y --no-install-recommends
-
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
 
 RUN python3 -m pip install pip==23.0.1
 RUN pip install fastapi uvicorn[standard]
